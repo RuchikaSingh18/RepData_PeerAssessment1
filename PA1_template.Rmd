@@ -4,31 +4,15 @@ output:
   html_document:
     keep_md: true
 ---
-
-
 ## Loading and preprocessing the data
-
-
-
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
-
 
 #unzip("activity.zip")
 initialData <- read.csv("C:\\activity.csv", colClasses=c("numeric", "Date", "numeric"))
 head(initialData)
 str(initialData)
+
+## What is mean total number of steps taken per day?
+
 data <- initialData[!(is.na(initialData$steps)), ]
 head(data)
 totalStepsDay <- aggregate(steps ~ date, data, sum)
@@ -44,6 +28,9 @@ library(dplyr)
 totalStepsSummary <- summarise(totalStepsDay, meanOfTotalSteps=mean(totalStepsDay$steps),
 medianOfTotalSteps=median(totalStepsDay$steps))
 print(totalStepsSummary)
+
+## What is the average daily activity pattern?
+
 meanStepsInterval <- aggregate(steps ~ interval, data, mean)
 head(meanStepsInterval)
 plot(x=meanStepsInterval$interval, y=meanStepsInterval$steps, type="l",
@@ -51,6 +38,9 @@ plot(x=meanStepsInterval$interval, y=meanStepsInterval$steps, type="l",
      ylab="Number of Steps", xlab="Intervals (in 5 mins)",
      col="darkblue", lwd=1.5, family="serif")
 meanStepsInterval[grep(max(meanStepsInterval$steps), meanStepsInterval$steps), ]
+
+## Imputing missing values
+
 anyNA(initialData)
 data.frame(steps=sum(is.na(initialData$steps)), 
            interval=sum(is.na(initialData$interval)), 
@@ -83,6 +73,9 @@ mtext("Histograms of Total Number of Steps Taken per Day, Without/With Imputed V
 naByDate <- initialData[is.na(initialData$steps), ]
 table(naByDate$date)
 length(unique(data$interval))
+
+## Are there differences in activity patterns between weekdays and weekends?
+
 daysData <- imputedData
 daysData$days <- weekdays(daysData$date)
 daysData$weekday <- as.character(rep(0, times=17568))
